@@ -1,4 +1,5 @@
 import cv2
+import joblib
 import mediapipe as mp
 import utils
 import models
@@ -62,6 +63,8 @@ def test_model(model, scaler):
           right_foot_index_angle = calculate_angle(right_heel, right_foot_index, [right_foot_index[0]-0.1, right_foot_index[1]])
 
           left_knee_to_right_knee = calculate_distance(left_knee, right_knee)
+          left_hip_to_right_hip = calculate_distance(left_hip, right_hip)
+          hip_width_to_knee_width_ratio = left_knee_to_right_knee/left_hip_to_right_hip
 
           cv2.putText(image, str(int(left_knee_angle)), 
                                   tuple(np.multiply(left_knee, [int(frame.shape[1]), int(frame.shape[0])]).astype(int)), 
@@ -89,7 +92,9 @@ def test_model(model, scaler):
                                       )
         except:
           pass
-        input_data = landmark_data + [left_knee_angle, left_hip_angle, left_foot_index_angle, right_knee_angle, right_hip_angle, right_foot_index_angle,left_knee_to_right_knee]
+        input_data = landmark_data + [left_knee_angle, left_hip_angle, left_foot_index_angle, right_knee_angle, 
+                      right_hip_angle, right_foot_index_angle, left_knee_to_right_knee, left_hip_to_right_hip,
+                      hip_width_to_knee_width_ratio]
         feedback = model.predict(scaler.transform([input_data]))
         cv2.rectangle(image, (0,0), (150,80), (255,255,255), -1)
 
@@ -110,7 +115,8 @@ def test_model(model, scaler):
   cv2.destroyAllWindows()
 
 def main():
-  model, scaler = models.initial_svm_model()
+  model_filename = "initial_svm.sav"
+  model, scaler = joblib.load(model_filename)
   test_model(model, scaler)
   return
 
