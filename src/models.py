@@ -2,8 +2,7 @@ import pandas as pd
 import glob
 import os
 from IPython.display import display
-
-import numpy as np
+import joblib
 
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.decomposition import PCA
@@ -32,7 +31,7 @@ def initial_svm_model():
   X = df.drop(['target'], axis=1)
 
   # Split the data for testing and training
-  X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.40, random_state=0)
+  X_train, X_test, y_train, y_test = train_test_split(X.values, y, test_size=0.40, random_state=0)
 
   # Scale data
   scaler = StandardScaler()
@@ -72,7 +71,7 @@ def initial_svm_model():
   return (model, scaler)
 
 def main():
-  initial_svm_model()
+  joblib.dump(initial_svm_model(), 'initial_svm.sav')
   return
 
 if __name__ == "__main__":
