@@ -40,6 +40,8 @@ def build_feature_vectors(df):
   df['left_hip_to_right_hip'] = df.apply(lambda x: calculate_distance([x['x_23'], x['y_23']],[x['x_24'], x['y_24']]), axis=1)
   df['hip_width_to_knee_width_ratio'] = df.apply(lambda x: x['left_knee_to_right_knee']/x['left_hip_to_right_hip'], axis=1)
   
+  df.drop(['frame_width', 'frame_height'], axis=1, inplace=True)
+
   return df
 
 def preprocess_data(filepaths):
