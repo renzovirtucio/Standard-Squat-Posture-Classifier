@@ -21,7 +21,7 @@ def load_data_into_df(filepaths):
 
 def build_feature_vectors(df):
   df = df.rename(columns={'Unnamed: 0': 'frame_number'})
-  df = df.drop(['frame_number'], axis=1)
+  df = df.drop(['frame_number', 'frame_width', 'frame_height'], axis=1)
 
   for i in range(33):
     df = df.drop(['body_'+str(i)], axis=1)
@@ -30,17 +30,28 @@ def build_feature_vectors(df):
   for i in exclude_landmarks:
     df = df.drop(['x_'+str(i),'y_'+str(i),'z_'+str(i),'visibility_'+str(i)], axis=1)
 
-  df['left_knee_angle'] = df.apply(lambda x: calculate_angle([x['x_23'], x['y_23']], [x['x_25'], x['y_25']], [x['x_27'], x['y_27']]), axis=1)
-  df['left_hip_angle'] = df.apply(lambda x: calculate_angle([x['x_11'], x['y_11']], [x['x_23'], x['y_23']], [x['x_25'], x['y_25']]), axis=1)
-  df['left_foot_index_angle'] = df.apply(lambda x: calculate_angle([x['x_29'], x['y_29']], [x['x_31'], x['y_31']], [x['x_31']-0.1, x['y_31']]), axis=1)
-  df['right_knee_angle'] = df.apply(lambda x: calculate_angle([x['x_24'], x['y_24']], [x['x_26'], x['y_26']], [x['x_28'], x['y_28']]), axis=1)
-  df['right_hip_angle'] = df.apply(lambda x: calculate_angle([x['x_12'], x['y_12']], [x['x_24'], x['y_24']], [x['x_26'], x['y_26']]), axis=1)
-  df['right_foot_index_angle'] = df.apply(lambda x: calculate_angle([x['x_30'], x['y_30']], [x['x_32'], x['y_32']], [x['x_32']-0.1, x['y_32']]), axis=1)
-  df['left_knee_to_right_knee'] = df.apply(lambda x: calculate_distance([x['x_25'], x['y_25']],[x['x_26'], x['y_26']]), axis=1)
-  df['left_hip_to_right_hip'] = df.apply(lambda x: calculate_distance([x['x_23'], x['y_23']],[x['x_24'], x['y_24']]), axis=1)
-  df['hip_width_to_knee_width_ratio'] = df.apply(lambda x: x['left_knee_to_right_knee']/x['left_hip_to_right_hip'], axis=1)
+  df['left_knee_angle'] = df.apply(lambda x: calculate_angle([x['x_23'], x['y_23']], 
+                                    [x['x_25'], x['y_25']], [x['x_27'], x['y_27']]), axis=1)
+  df['left_hip_angle'] = df.apply(lambda x: calculate_angle([x['x_11'], x['y_11']], 
+                                    [x['x_23'], x['y_23']], [x['x_25'], x['y_25']]), axis=1)
+  df['left_foot_index_angle'] = df.apply(lambda x: calculate_angle([x['x_29'], x['y_29']], 
+                                    [x['x_31'], x['y_31']], [x['x_31']-0.1, x['y_31']]), axis=1)
+  df['right_knee_angle'] = df.apply(lambda x: calculate_angle([x['x_24'], x['y_24']], 
+                                    [x['x_26'], x['y_26']], [x['x_28'], x['y_28']]), axis=1)
+  df['right_hip_angle'] = df.apply(lambda x: calculate_angle([x['x_12'], x['y_12']], 
+                                    [x['x_24'], x['y_24']], [x['x_26'], x['y_26']]), axis=1)
+  df['right_foot_index_angle'] = df.apply(lambda x: calculate_angle([x['x_30'], x['y_30']], 
+                                    [x['x_32'], x['y_32']], [x['x_32']-0.1, x['y_32']]), axis=1)
   
-  df.drop(['frame_width', 'frame_height'], axis=1, inplace=True)
+  # df['left_knee_to_right_knee'] = df.apply(lambda x: calculate_distance([x['x_25'], x['y_25']],[x['x_26'], x['y_26']]), axis=1)
+  # df['left_hip_to_right_hip'] = df.apply(lambda x: calculate_distance([x['x_23'], x['y_23']],[x['x_24'], x['y_24']]), axis=1)
+  # df['left_hip_to_left_shoulder'] = df.apply(lambda x: calculate_distance([x['x_11'], x['y_11']],[x['x_23'], x['y_23']]), axis=1)
+  # df['right_hip_to_right_shoulder'] = df.apply(lambda x: calculate_distance([x['x_12'], x['y_12']],[x['x_24'], x['y_24']]), axis=1)
+  # df['left_shoulder_to_right_shoulder'] = df.apply(lambda x: calculate_distance([x['x_11'], x['y_11']],[x['x_12'], x['y_12']]), axis=1)
+  
+  df['hip_width_to_knee_width_ratio'] = df.apply(lambda x: calculate_distance([x['x_25'], x['y_25']], 
+                                          [x['x_26'], x['y_26']])/calculate_distance([x['x_23'], x['y_23']], 
+                                          [x['x_24'], x['y_24']]), axis=1)
 
   return df
 
