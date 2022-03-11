@@ -1,3 +1,4 @@
+from cv2 import split
 import pandas as pd
 import glob
 import os
@@ -10,6 +11,7 @@ from sklearn.pipeline import make_pipeline
 from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, accuracy_score, classification_report
+from sklearn.model_selection import cross_val_score
 import matplotlib.pyplot as plt
 import preprocessing
 
@@ -17,61 +19,62 @@ CUSTOM_POSE_CONNECTIONS = frozenset([(11, 12), (11, 23), (12, 24), (23, 24), (23
                               (24, 26), (25, 27), (26, 28), (27, 29), (28, 30),
                               (29, 31), (30, 32), (27, 31), (28, 32)])
 
-def initial_svm_model():
+def split_data():
   ## Preprocess data
   df = preprocessing.preprocess_data([os.path.normpath(i) for i in 
           glob.glob('D:\Documents\CS 198\Data Collection\Dataset\Extracted Data/**/*.csv', 
           recursive = True)])
   # print(df.describe().transpose())
-  print(df.shape)
+  print("(rows, columns) =", df.shape)
   print(df['target'].value_counts())
 
-  ## Create SVM classifier
   y = df['target']
   X = df.drop(['target'], axis=1)
 
   # Split the data for testing and training
   X_train, X_test, y_train, y_test = train_test_split(X.values, y, test_size=0.40, random_state=0)
 
-  # Scale data
-  scaler = StandardScaler()
-  scaler.fit(X_train)
-  X_train = scaler.transform(X_train)
-  # scaled_frame = pd.DataFrame(X_train,columns=X.columns)
-  # print(scaled_frame.describe().transpose())
-  X_test = scaler.transform(X_test)
+  return X_train, X_test, y_train, y_test
 
-  # scaler = make_pipeline(StandardScaler(), PCA(n_components=40))
-  # X_train = scaler.fit_transform(X_train)
-  # X_test = scaler.transform(X_test)
-
-  # Fitting a support vector machine
-  model = SVC(random_state=0)
-  print("SVC parameters:", model.get_params())
-  model.fit(X_train, y_train)
-
-  # Compute model predictions
-  model_predictions = model.predict(X_test)
+def show_performance(clf, X_test, y_test):
+  # Compute classifier predictions
+  clf_predictions = clf.predict(X_test)
 
   # Compute accuracy score
-  orig_acc_score_SVM = accuracy_score(y_test, model_predictions)
+  orig_acc_score_SVM = accuracy_score(y_test, clf_predictions)
   print("Accuracy score:", orig_acc_score_SVM)
 
   # Plot confusion matrix
-  cm = confusion_matrix(y_test, model_predictions, labels=model.classes_)
-  disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=model.classes_)
+  cm = confusion_matrix(y_test, clf_predictions, labels=clf.classes_)
+  disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=clf.classes_)
   disp.plot()  
   print("Figure 3. Confusion Matrix of SVM Model")
   plt.show() 
 
   # Print classification report
   print("Table 6. Classification Report of SVM Model")
-  print(classification_report(y_test, model_predictions))
+  print(classification_report(y_test, clf_predictions))
+  return
 
-  return (model, scaler)
+def svm_clf(X_train, y_train):
+  # Fitting a support vector machine
+  clf = make_pipeline(StandardScaler(), SVC(random_state=0))
+  # print(clf.get_params())
+  clf.fit(X_train, y_train)
+
+  return clf
 
 def main():
-  joblib.dump(initial_svm_model(), 'initial_svm.sav')
+  # Split data and train classifiers
+  # joblib.dump(split_data(), 'preprocessed_data.sav')
+  X_train, X_test, y_train, y_test = joblib.load('preprocessed_data.sav')
+
+  # Save classifier to file
+  # joblib.dump(svm_clf(X_train, y_train), 'svm_clf.sav')
+
+  # Load classifier and display its performance
+  clf = joblib.load('svm_clf.sav')
+  show_performance(clf, X_test, y_test)
   return
 
 if __name__ == "__main__":
