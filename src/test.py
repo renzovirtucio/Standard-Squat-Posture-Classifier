@@ -7,14 +7,15 @@ from utils import calculate_angle, calculate_distance, rescale_frame
 mp_drawing = mp.solutions.drawing_utils
 mp_pose = mp.solutions.pose
 
-def test_model(model, scaler):
-  cap = cv2.VideoCapture("D:/Documents/CS 198/Data Collection/Dataset/Segmented Videos/14/hs/hs_01.mp4")
+def test_model(model):
+  cap = cv2.VideoCapture("D:/Documents/CS 198/Data Collection/Dataset/Segmented Videos/06/hs/hs_01.mp4")
+  # cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
   frame_num = 0
   with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as pose:
     while cap.isOpened():
       ret, frame = cap.read()
       if ret == True:
-        # frame = rescale_frame(frame, 50)
+        frame = rescale_frame(frame, 50)
         # Recolor image to RGB
         image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         image.flags.writeable = False
@@ -27,15 +28,14 @@ def test_model(model, scaler):
         # Render detections
         # mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
         image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-
+        input_data = []
         try:
           # Extract landmarks
           landmarks = results.pose_landmarks.landmark
           
-          landmark_data = []
           custom_landmarks = [0, 11, 12, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32]
           for j in custom_landmarks:
-            landmark_data += [landmarks[j].x, landmarks[j].y, landmarks[j].z, landmarks[j].visibility]
+            input_data += [landmarks[j].x, landmarks[j].y, landmarks[j].z, landmarks[j].visibility]
           
           left_hip = [landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x,landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y]
           left_knee = [landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].x,landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].y]
@@ -61,7 +61,14 @@ def test_model(model, scaler):
 
           left_knee_to_right_knee = calculate_distance(left_knee, right_knee)
           left_hip_to_right_hip = calculate_distance(left_hip, right_hip)
+          # left_hip_to_left_shoulder = calculate_distance(left_hip, left_shoulder)
+          # right_hip_to_right_shoulder = calculate_distance(right_hip, right_shoulder)
+          # left_shoulder_to_right_shoulder = calculate_distance(left_shoulder, right_shoulder)
+          
           hip_width_to_knee_width_ratio = left_knee_to_right_knee/left_hip_to_right_hip
+
+          input_data += [left_knee_angle, left_hip_angle, left_foot_index_angle, right_knee_angle, 
+                      right_hip_angle, right_foot_index_angle, hip_width_to_knee_width_ratio]
 
           # cv2.putText(image, str(int(left_knee_angle)), 
           #                         tuple(np.multiply(left_knee, [int(frame.shape[1]), int(frame.shape[0])]).astype(int)), 
@@ -89,10 +96,8 @@ def test_model(model, scaler):
                                       # )
         except:
           pass
-        input_data = landmark_data + [left_knee_angle, left_hip_angle, left_foot_index_angle, right_knee_angle, 
-                      right_hip_angle, right_foot_index_angle, left_knee_to_right_knee, left_hip_to_right_hip,
-                      hip_width_to_knee_width_ratio]
-        feedback = model.predict(scaler.transform([input_data]))
+        
+        feedback = model.predict([input_data])
         cv2.rectangle(image, (0,0), (150,70), (255,255,255), -1)
 
         cv2.putText(image, 'PREDICTED CLASS:', (0,12), 
@@ -116,9 +121,9 @@ def test_model(model, scaler):
   cv2.destroyAllWindows()
 
 def main():
-  model_filename = "initial_svm.sav"
-  model, scaler = joblib.load(model_filename)
-  test_model(model, scaler)
+  model_filename = "svm_clf.sav"
+  model = joblib.load(model_filename)
+  test_model(model)
   return
 
 if __name__ == "__main__":
