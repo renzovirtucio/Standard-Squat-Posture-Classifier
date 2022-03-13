@@ -4,11 +4,12 @@ import mediapipe as mp
 import utils
 import numpy as np
 from utils import calculate_angle, calculate_distance, rescale_frame
+# import custom_drawing_utils as mp_drawing
 mp_drawing = mp.solutions.drawing_utils
 mp_pose = mp.solutions.pose
 
-def test_model(model):
-  cap = cv2.VideoCapture("D:/Documents/CS 198/Data Collection/Dataset/Segmented Videos/06/hs/hs_01.mp4")
+def test_model(clf):
+  cap = cv2.VideoCapture("D:/Documents/CS 198/Data Collection/Dataset/Segmented Videos/02/ak/ak_02.mp4")
   # cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
   frame_num = 0
   with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as pose:
@@ -61,14 +62,62 @@ def test_model(model):
 
           left_knee_to_right_knee = calculate_distance(left_knee, right_knee)
           left_hip_to_right_hip = calculate_distance(left_hip, right_hip)
-          # left_hip_to_left_shoulder = calculate_distance(left_hip, left_shoulder)
-          # right_hip_to_right_shoulder = calculate_distance(right_hip, right_shoulder)
-          # left_shoulder_to_right_shoulder = calculate_distance(left_shoulder, right_shoulder)
+          left_hip_to_left_shoulder = calculate_distance(left_hip, left_shoulder)
+          right_hip_to_right_shoulder = calculate_distance(right_hip, right_shoulder)
+          left_shoulder_to_right_shoulder = calculate_distance(left_shoulder, right_shoulder)
+
+          left_hip_to_left_knee = calculate_distance([landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x, 
+                                    landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y], 
+                                    [landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].x, 
+                                    landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].y])
+          right_hip_to_right_knee = calculate_distance([landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].x, 
+                                    landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].y],
+                                    [landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].x, 
+                                    landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].y])
+          left_knee_to_left_ankle = calculate_distance([landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].x, 
+                                    landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].y],
+                                    [landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].x, 
+                                    landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].y])
+          right_knee_to_right_ankle = calculate_distance([landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].x, 
+                                    landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].y],
+                                    [landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].x, 
+                                    landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].y])
+
+          left_ankle_to_left_heel = calculate_distance([landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].x, 
+                                    landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].y],
+                                    [landmarks[mp_pose.PoseLandmark.LEFT_HEEL.value].x, 
+                                    landmarks[mp_pose.PoseLandmark.LEFT_HEEL.value].y])
+          left_heel_to_left_foot_index = calculate_distance([landmarks[mp_pose.PoseLandmark.LEFT_HEEL.value].x, 
+                                    landmarks[mp_pose.PoseLandmark.LEFT_HEEL.value].y],
+                                    [landmarks[mp_pose.PoseLandmark.LEFT_FOOT_INDEX.value].x, 
+                                    landmarks[mp_pose.PoseLandmark.LEFT_FOOT_INDEX.value].y])
+          left_foot_index_to_left_ankle = calculate_distance([landmarks[mp_pose.PoseLandmark.LEFT_FOOT_INDEX.value].x, 
+                                    landmarks[mp_pose.PoseLandmark.LEFT_FOOT_INDEX.value].y],
+                                    [landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].x, 
+                                    landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].y])
+
+          right_ankle_to_right_heel = calculate_distance([landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].x, 
+                                    landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].y],
+                                    [landmarks[mp_pose.PoseLandmark.RIGHT_HEEL.value].x, 
+                                    landmarks[mp_pose.PoseLandmark.RIGHT_HEEL.value].y])
+          right_heel_to_right_foot_index = calculate_distance([landmarks[mp_pose.PoseLandmark.RIGHT_HEEL.value].x, 
+                                    landmarks[mp_pose.PoseLandmark.RIGHT_HEEL.value].y],
+                                    [landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX.value].x, 
+                                    landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX.value].y])
+          right_foot_index_to_right_ankle = calculate_distance([landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX.value].x, 
+                                    landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX.value].y],
+                                    [landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].x, 
+                                    landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].y])
           
           hip_width_to_knee_width_ratio = left_knee_to_right_knee/left_hip_to_right_hip
 
           input_data += [left_knee_angle, left_hip_angle, left_foot_index_angle, right_knee_angle, 
-                      right_hip_angle, right_foot_index_angle, hip_width_to_knee_width_ratio]
+                      right_hip_angle, right_foot_index_angle, left_hip_to_right_hip, left_hip_to_left_shoulder, 
+                      right_hip_to_right_shoulder, left_shoulder_to_right_shoulder, 
+                      left_hip_to_left_knee, right_hip_to_right_knee, left_knee_to_left_ankle, 
+                      right_knee_to_right_ankle, left_ankle_to_left_heel, left_heel_to_left_foot_index, 
+                      left_foot_index_to_left_ankle, right_ankle_to_right_heel, right_heel_to_right_foot_index, 
+                      right_foot_index_to_right_ankle, hip_width_to_knee_width_ratio]
 
           # cv2.putText(image, str(int(left_knee_angle)), 
           #                         tuple(np.multiply(left_knee, [int(frame.shape[1]), int(frame.shape[0])]).astype(int)), 
@@ -96,15 +145,17 @@ def test_model(model):
                                       # )
         except:
           pass
-        
-        feedback = model.predict([input_data])
-        cv2.rectangle(image, (0,0), (150,70), (255,255,255), -1)
+        # print(input_data)
 
-        cv2.putText(image, 'PREDICTED CLASS:', (0,12), 
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1, cv2.LINE_AA)
-        cv2.putText(image, str(feedback[0]), 
-                    (0,60), 
-                    cv2.FONT_HERSHEY_SIMPLEX, 2, (0,0,0), 2, cv2.LINE_AA)
+        if len(input_data) > 0:
+          feedback = clf.predict([input_data])
+          cv2.rectangle(image, (0,0), (150,70), (255,255,255), -1)
+
+          cv2.putText(image, 'PREDICTED CLASS:', (0,12), 
+                      cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1, cv2.LINE_AA)
+          cv2.putText(image, str(feedback[0]), 
+                      (0,60), 
+                      cv2.FONT_HERSHEY_SIMPLEX, 2, (0,0,0), 2, cv2.LINE_AA)
         
         # Save frame to .jpg
         # cv2.imwrite('D:/Documents/CS 198/Data Collection/Dataset/Extracted Frames/Frame'+str(frame_num)+'.jpg', image)
@@ -121,9 +172,9 @@ def test_model(model):
   cv2.destroyAllWindows()
 
 def main():
-  model_filename = "svm_clf.sav"
-  model = joblib.load(model_filename)
-  test_model(model)
+  clf_filename = "../assets/svm_clf.sav"
+  clf = joblib.load(clf_filename)
+  test_model(clf)
   return
 
 if __name__ == "__main__":
