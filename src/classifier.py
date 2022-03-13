@@ -45,8 +45,8 @@ def show_performance(clf, X_test, y_test):
   print("Accuracy score:", orig_acc_score_SVM)
 
   # Show confusion matrix
-  cm = ConfusionMatrixDisplay.from_predictions(y_test, clf_predictions, display_labels=clf.classes_, cmap=plt.cm.Blues,
-          normalize='true')
+  cm = ConfusionMatrixDisplay.from_predictions(y_test, clf_predictions, display_labels=clf.classes_, 
+          cmap=plt.cm.Blues, normalize='true')
   print("Confusion Matrix of SVM Model")
   print(cm.confusion_matrix)
   plt.show() 
@@ -78,6 +78,7 @@ def main():
   # Load classifier and display its performance
   clf = joblib.load('../assets/svm_clf.sav')
   show_performance(clf, X_test, y_test)
+
   return
 
 if __name__ == "__main__":
