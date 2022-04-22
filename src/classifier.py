@@ -21,11 +21,8 @@ CUSTOM_POSE_CONNECTIONS = frozenset([(11, 12), (11, 23), (12, 24), (23, 24), (23
 def split_data():
   ## Preprocess data
   df = preprocessing.preprocess_data([os.path.normpath(i) for i in 
-          glob.glob('D:\Documents\CS 198\Data Collection\Dataset\Extracted Data/**/*.csv', 
+          glob.glob('D:\Documents\CS 198\Data Collection\Dataset/New Extracted Data/**/*.csv', 
           recursive = True)])
-  # print(df.describe().transpose())
-  print("(rows, columns) =", df.shape)
-  print(df['target'].value_counts())
 
   # Pop target column from dataframe
   y = df['target']
