@@ -85,10 +85,10 @@ def main():
   X_train, X_test, y_train, y_test = joblib.load('../assets/preprocessed_data.sav')
 
   # Save classifier to file
-  joblib.dump(svm_clf(X_train, y_train), '../assets/svm_clf.sav')
+  joblib.dump(svm_clf(X_train, y_train), '../assets/clf.sav')
 
   # Load classifier and display its performance
-  clf = joblib.load('../assets/svm_clf.sav')
+  clf = joblib.load('../assets/clf.sav')
   show_performance(clf, X_test, y_test)
 
   return

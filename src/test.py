@@ -3,7 +3,7 @@ import joblib
 import mediapipe as mp
 import utils
 import numpy as np
-from utils import ResizeWithAspectRatio, calculate_angle, calculate_distance, rescale_frame, resize_with_aspect_ratio
+from utils import calculate_angle, calculate_distance, rescale_frame, resize_with_aspect_ratio
 import time
 # import custom_drawing_utils as mp_drawing
 mp_drawing = mp.solutions.drawing_utils
@@ -204,7 +204,7 @@ def test_model(clf, webcamMode):
   return
 
 def main():
-  clf_filename = "../assets/svm_clf.sav"
+  clf_filename = "../assets/clf.sav"
   clf = joblib.load(clf_filename)
   test_model(clf, int(input("Webcam? ")))
   return
