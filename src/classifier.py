@@ -71,8 +71,8 @@ def show_performance(clf, X_test, y_test):
 
 def svm_clf(X_train, y_train):
   # Fit a support vector machine
-  clf = make_pipeline(StandardScaler(), LogisticRegression(random_state=0, max_iter=1000, solver='liblinear'))
-  print(clf['logisticregression'].get_params())
+  clf = make_pipeline(StandardScaler(), SVC(random_state=0, kernel='rbf', gamma=0.001, C=1))
+  print(clf['svc'].get_params())
   clf.fit(X_train, y_train)
 
   return clf
