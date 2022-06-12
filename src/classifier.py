@@ -68,10 +68,10 @@ def svm_clf(X_train, y_train):
 
 def main():
   # Split data and save to file
-  joblib.dump(split_data(), '../assets/preprocessed_data.sav')
+  joblib.dump(split_data(), '../assets/processed_data.sav')
 
   # Load data
-  X_train, X_test, y_train, y_test = joblib.load('../assets/preprocessed_data.sav')
+  X_train, X_test, y_train, y_test = joblib.load('../assets/processed_data.sav')
 
   # Save classifier to file
   joblib.dump(svm_clf(X_train, y_train), '../assets/clf.sav')
