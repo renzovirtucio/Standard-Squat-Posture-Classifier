@@ -1,17 +1,11 @@
-from cv2 import split
 import pandas as pd
 import glob
 import os
-from IPython.display import display
 import joblib
 
-from sklearn.preprocessing import MinMaxScaler, StandardScaler
-from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import make_pipeline
 from sklearn.model_selection import train_test_split
-from sklearn.neural_network import MLPClassifier
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from sklearn.metrics import ConfusionMatrixDisplay, accuracy_score, classification_report
 import matplotlib.pyplot as plt
@@ -26,16 +20,13 @@ def split_data():
   df_train = preprocessing.preprocess_data([os.path.normpath(i) for i in 
                         glob.glob('D:\Documents\CS 198\Data Collection\Dataset/New Extracted Data/**/*-train.csv', 
                         recursive = True)])
-  print("(rows, columns) =", df_train.shape)
-  print(df_train['target'].value_counts())
 
   df_test = preprocessing.preprocess_data([os.path.normpath(i) for i in 
                         glob.glob('D:\Documents\CS 198\Data Collection\Dataset/New Extracted Data/**/*-test.csv', 
                         recursive = True)])
-  print("(rows, columns) =", df_test.shape)
-  print(df_test['target'].value_counts())
 
   df = pd.concat([df_train, df_test], ignore_index=True)
+  print(df['target'].value_counts())
 
   # Pop target column from dataframe
   y = df['target']
@@ -43,8 +34,6 @@ def split_data():
 
   # Split the data for testing and training
   X_train, X_test, y_train, y_test = train_test_split(X.values, y, test_size=df_test.shape[0], random_state=0, shuffle=False)
-
-  # display(X_test)
 
   return X_train, X_test, y_train, y_test
 
@@ -58,7 +47,7 @@ def show_performance(clf, X_test, y_test):
 
   # Show confusion matrix
   cm = ConfusionMatrixDisplay.from_predictions(y_test, clf_predictions, display_labels=clf.classes_, 
-          cmap=plt.cm.Blues, normalize='true')
+          cmap=plt.cm.Blues)
   print("Confusion Matrix of SVM Model")
   print(cm.confusion_matrix)
   plt.show() 

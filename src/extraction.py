@@ -195,8 +195,34 @@ def extract_raw_data_v2():
   return
 
 def main():
-  extract_raw_data_v2()
+  # extract_raw_data_v2()
   # extract_frames()
+  
+  t = ["01", "02", "03", "04", "05", "06", "07", "12", "13", "14"]
+  total_per_indiv = []
+
+  for i in t: 
+    acc_filepaths = [os.path.normpath(i) for i in glob.glob('D:\Documents\CS 198\Data Collection\Dataset\Segmented Videos/'+i+'/acc/*/*.jpg', 
+                      recursive = True)]
+    ak_filepaths = [os.path.normpath(i) for i in glob.glob('D:\Documents\CS 198\Data Collection\Dataset\Segmented Videos/'+i+'*/ak/*/*.jpg', 
+                    recursive = True)]
+    bo_filepaths = [os.path.normpath(i) for i in glob.glob('D:\Documents\CS 198\Data Collection\Dataset\Segmented Videos/'+i+'*/bo/*/*.jpg', 
+                      recursive = True)]
+    hs_filepaths = [os.path.normpath(i) for i in glob.glob('D:\Documents\CS 198\Data Collection\Dataset\Segmented Videos/'+i+'*/hs/*/*.jpg', 
+                      recursive = True)]
+    kvg_filepaths = [os.path.normpath(i) for i in glob.glob('D:\Documents\CS 198\Data Collection\Dataset\Segmented Videos/'+i+'*/kvg/*/*.jpg', 
+                      recursive = True)]
+    kvr_filepaths = [os.path.normpath(i) for i in glob.glob('D:\Documents\CS 198\Data Collection\Dataset\Segmented Videos/'+i+'*/kvr/*/*.jpg', 
+                      recursive = True)]
+    others_filepaths = [os.path.normpath(i) for i in glob.glob('D:\Documents\CS 198\Data Collection\Dataset\Segmented Videos/'+i+'*/*/*/Others/*.jpg', 
+                      recursive = True)]
+
+    total_per_indiv.append(len(acc_filepaths)+len(ak_filepaths)+len(bo_filepaths)+len(hs_filepaths)+len(kvg_filepaths)+len(kvr_filepaths)+len(others_filepaths))
+    
+    print(len(acc_filepaths), len(ak_filepaths), len(bo_filepaths), len(hs_filepaths), len(kvg_filepaths), len(kvr_filepaths), len(others_filepaths), len(acc_filepaths)+len(ak_filepaths)+len(bo_filepaths)+len(hs_filepaths)+len(kvg_filepaths)+len(kvr_filepaths)+len(others_filepaths))
+  
+  print(sum(total_per_indiv))
+
   return
 
 if __name__ == "__main__":
