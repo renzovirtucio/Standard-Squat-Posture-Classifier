@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC
 from sklearn.metrics import ConfusionMatrixDisplay, accuracy_score, classification_report
 import matplotlib.pyplot as plt
-import preprocessing
+import features
 
 CUSTOM_POSE_CONNECTIONS = frozenset([(11, 12), (11, 23), (12, 24), (23, 24), (23, 25),
                               (24, 26), (25, 27), (26, 28), (27, 29), (28, 30),
@@ -17,11 +17,11 @@ CUSTOM_POSE_CONNECTIONS = frozenset([(11, 12), (11, 23), (12, 24), (23, 24), (23
 
 def split_data():
   ## Preprocess data
-  df_train = preprocessing.preprocess_data([os.path.normpath(i) for i in 
+  df_train = features.process_data([os.path.normpath(i) for i in 
                         glob.glob('D:\Documents\CS 198\Data Collection\Dataset/New Extracted Data/**/*-train.csv', 
                         recursive = True)])
 
-  df_test = preprocessing.preprocess_data([os.path.normpath(i) for i in 
+  df_test = features.process_data([os.path.normpath(i) for i in 
                         glob.glob('D:\Documents\CS 198\Data Collection\Dataset/New Extracted Data/**/*-test.csv', 
                         recursive = True)])
 

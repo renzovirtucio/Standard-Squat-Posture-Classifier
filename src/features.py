@@ -17,7 +17,7 @@ def load_data_into_df(filepaths):
 
   return pd.concat(dataframes, ignore_index=True)
 
-def build_feature_vectors(df):
+def derive_features(df):
   df = df.drop_duplicates()
   df = df.rename(columns={'Unnamed: 0': 'frame_number'})
   df = df.drop(['frame_number', 'frame_width', 'frame_height'], axis=1)
@@ -79,8 +79,8 @@ def build_feature_vectors(df):
 
   return df
 
-def preprocess_data(filepaths):
-  df = build_feature_vectors(load_data_into_df(filepaths))
+def process_data(filepaths):
+  df = derive_features(load_data_into_df(filepaths))
   df_mirror = df.copy()
   df_mirror = df_mirror[['target', 'right_knee_angle', 'right_hip_angle', 'right_ankle_angle', 'left_knee_angle', 'left_hip_angle', 'left_ankle_angle', 'left_hip_to_right_hip', 'right_torso_height_to_hip_width_ratio', 'left_torso_height_to_hip_width_ratio', 'shoulder_width_to_hip_width_ratio', 'right_thigh_height_to_hip_width_ratio', 'left_thigh_height_to_hip_width_ratio', 'right_shin_length_to_hip_width_ratio', 'left_shin_length_to_hip_width_ratio', 'right_ankle_to_right_heel_to_hip_width_ratio', 'right_heel_to_right_foot_index_to_hip_width_ratio', 'right_foot_index_to_right_ankle_to_hip_width_ratio', 'left_ankle_to_left_heel_to_hip_width_ratio', 'left_heel_to_left_foot_index_to_hip_width_ratio', 'left_foot_index_to_left_ankle_to_hip_width_ratio', 'knee_width_to_hip_width_ratio']]
 
@@ -89,11 +89,11 @@ def preprocess_data(filepaths):
   return pd.concat([df, df_mirror], ignore_index=True)
 
 def main():
-  df_train = preprocess_data([os.path.normpath(i) for i in 
+  df_train = process_data([os.path.normpath(i) for i in 
                         glob.glob('D:\Documents\CS 198\Data Collection\Dataset/New Extracted Data/**/*-train.csv', 
                         recursive = True)])
   
-  df_test = preprocess_data([os.path.normpath(i) for i in 
+  df_test = process_data([os.path.normpath(i) for i in 
                         glob.glob('D:\Documents\CS 198\Data Collection\Dataset/New Extracted Data/**/*-test.csv', 
                         recursive = True)])
 
