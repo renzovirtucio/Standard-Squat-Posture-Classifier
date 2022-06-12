@@ -11,3 +11,5 @@ This repository contains the source code and assets of the implementation for th
 /assets/ contains the assets produced by `classifier.py`:
 1. `clf.sav` - contains the SVM classifer.
 2. `processed_data.sav` - contains the processed data, i.e, data with the derived features as its columns.
+
+Important Note: Python packages enlisted in `requirements.py` must first be installed in your environment before you can execute the scripts.
