@@ -8,9 +8,9 @@ This repository contains the source code and assets of the implementation for th
 3. `classifier.py` - creates, trains and tests an SVM classifer to classify standard squat postures.
 4. `test.py` - uses the saved SVM classifier and processed data for live webcam testing.
 
+Before executing any of the scripts, kindly first make sure that the Python packages enlisted in `requirements.txt` are installed in your environment.
+
 `/assets/` contains the assets for the implementation:
 1. `clf.sav` - contains the SVM classifer.
 2. `processed_data.sav` - contains the processed data, i.e, data with the derived features as its columns.
-3. `/assets/extracted-data/` - contains the data extracted using MediaPipe Pose
-
-Important Note: Python packages enlisted in `requirements.txt` must first be installed in your environment before you can execute the scripts.
+3. `/assets/extracted-data/` - contains the data extracted using MediaPipe Pose.
