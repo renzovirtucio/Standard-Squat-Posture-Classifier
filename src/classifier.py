@@ -18,11 +18,11 @@ CUSTOM_POSE_CONNECTIONS = frozenset([(11, 12), (11, 23), (12, 24), (23, 24), (23
 def split_data():
   ## Preprocess data
   df_train = features.process_data([os.path.normpath(i) for i in 
-                        glob.glob('D:\Documents\CS 198\Data Collection\Dataset/New Extracted Data/**/*-train.csv', 
+                        glob.glob('../assets/extracted-data/**/*-train.csv', 
                         recursive = True)])
 
   df_test = features.process_data([os.path.normpath(i) for i in 
-                        glob.glob('D:\Documents\CS 198\Data Collection\Dataset/New Extracted Data/**/*-test.csv', 
+                        glob.glob('../assets/extracted-data/**/*-test.csv', 
                         recursive = True)])
 
   df = pd.concat([df_train, df_test], ignore_index=True)
